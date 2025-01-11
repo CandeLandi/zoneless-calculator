@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import CalculatorButtonComponent from "../calculator-button/calculator-button.component";
 
 @Component({
-  selector: 'app-calculator',
+  selector: 'calculator',
   standalone: true,
-  imports: [],
+  imports: [CalculatorButtonComponent],
   templateUrl: './calculator.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './calculator.component.css'
 })
 export class CalculatorComponent {
