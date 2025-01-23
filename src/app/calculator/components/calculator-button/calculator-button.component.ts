@@ -17,52 +17,47 @@ export default class CalculatorButtonComponent {
   public isPressed = signal(false);
 
   public onClick = output<string>();
-  public contentValue = viewChild<ElementRef>('button')
+  public contentValue = viewChild<ElementRef<HTMLButtonElement>>('button');
 
   public isCommand = input(false, {
-    transform: (value: boolean | string ) =>
-      typeof value === 'string' ? value === 'true' : value
-  })
+    transform: (value: boolean | string) =>
+      typeof value === 'string' ? value === '' : value,
+  });
 
   public isDoubleSize = input(false, {
-    transform: (value: boolean | string ) =>
-      typeof value === 'string' ? value === 'true' : value
-  })
+    transform: (value: boolean | string) =>
+      typeof value === 'string' ? value === '' : value,
+  });
 
-/*   @HostBinding( 'class.w-2/4') get commandStyle(){
+  // @HostBinding('class.is-command') get commandStyle() {
+  //   return this.isCommand();
+  // }
 
-    return this.isDoubleSize();
-  } */
-/*
-  @HostBinding( 'class bg-indigo-700') get commandStyle(){
-    return this.isCommand();
-  } */
+  // @HostBinding('class.w-2/4') get commandStyle() {
+  //   return this.isDoubleSize();
+  // }
 
-/**
- * Emits a click event with a 'Hola mundo' message.
- */
-
-    handleClick(){
-      if (this.contentValue()!.nativeElement) {
-        return;
-      }
-      const value = this.contentValue()!.nativeElement.innerText
-      this.onClick.emit(value);
+  handleClick() {
+    if (!this.contentValue()?.nativeElement) {
+      return;
     }
 
-    public keyboardPressedStyle(key:string){
+    const value = this.contentValue()!.nativeElement.innerText;
 
-      if(!this.contentValue()) return;
+    this.onClick.emit(value.trim());
+  }
 
-      const value = this.contentValue()!.nativeElement.innerText
+  public keyboardPressedStyle(key: string) {
+    if (!this.contentValue()) return;
 
-      if(value !== key) return;
+    const value = this.contentValue()!.nativeElement.innerText;
 
-      this.isPressed.set(true);
+    if (value !== key) return;
 
-      setTimeout(() => {
-        this.isPressed.set(false);
-      }, 100);
+    this.isPressed.set(true);
 
-}
+    setTimeout(() => {
+      this.isPressed.set(false);
+    }, 100);
+  }
 }

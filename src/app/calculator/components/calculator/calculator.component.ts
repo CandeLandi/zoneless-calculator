@@ -1,5 +1,13 @@
-import { Component, ChangeDetectionStrategy, HostListener, viewChildren } from '@angular/core';
-import CalculatorButtonComponent from "../calculator-button/calculator-button.component";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  viewChildren,
+} from '@angular/core';
+
+import CalculatorButtonComponent from '../calculator-button/calculator-button.component';
+import { CalculatorService } from '@/calculator/services/calculator.service';
 
 @Component({
   selector: 'calculator',
@@ -8,28 +16,40 @@ import CalculatorButtonComponent from "../calculator-button/calculator-button.co
   templateUrl: './calculator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '(document:keyup)': 'handleKeyboardEvent($event)'
+    '(document:keyup)': 'handleKeyboardEvent($event)',
   },
-  styleUrl: './calculator.component.css'
+  // styles: `
+  //   // .is-command {
+  //   //   @apply bg-indigo-700 bg-opacity-20;
+  //   // }
+  // `,
 })
 export class CalculatorComponent {
-
- constructor(){console.log('CalculatorComponent inicializado');}
+  private calculatorService = inject(CalculatorService);
 
   public calculatorButtons = viewChildren(CalculatorButtonComponent);
-  handleClick(key: string){
-    console.log('Tecla presionada:', {key});
+
+  public resultText = computed(() => this.calculatorService.resultText());
+  public subResultText = computed(() => this.calculatorService.subResultText());
+  public lastOperator = computed(() => this.calculatorService.lastOperator());
+
+  // get resultText() {
+  //   return this.calculatorService.resultText();
+  // }
+
+  handleClick(key: string) {
+    this.calculatorService.constructNumber(key);
   }
 
-  handleKeyboardEvent( event: KeyboardEvent){
-
+  // @HostListener('document:keyup', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
     const keyEquivalents: Record<string, string> = {
       Escape: 'C',
       Clear: 'C',
-      '*': 'x',
+      X: '*',
       '/': '÷',
       Enter: '=',
-    }
+    };
 
     const key = event.key;
     const keyValue = keyEquivalents[key] ?? key;
@@ -37,7 +57,6 @@ export class CalculatorComponent {
     this.handleClick(keyValue);
 
     this.calculatorButtons().forEach((button) => {
-
       button.keyboardPressedStyle(keyValue);
     });
   }
